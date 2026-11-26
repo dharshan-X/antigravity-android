@@ -55,11 +55,15 @@ public final class AgyWebViewClient extends WebViewClient {
         Log.i(TAG, "shouldOverrideUrlLoading url="
                 + SensitiveDataRedactor.safeUrl(uri.toString()));
         if (!request.isForMainFrame()) {
-            // The web UI intentionally embeds HTTPS previews. Keep those working,
-            // while refusing file/javascript/intent and other non-web subframes.
+            // Allow HTTPS previews and local loopback sidecars (e.g. Swarm board),
+            // while refusing file/javascript/intent and untrusted non-web subframes.
             String scheme = uri.getScheme();
+            String host = uri.getHost();
+            boolean isLocalLoopback = ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))
+                    && ("localhost".equalsIgnoreCase(host) || "127.0.0.1".equals(host));
             return !"https".equalsIgnoreCase(scheme)
-                    && !"about".equalsIgnoreCase(scheme);
+                    && !"about".equalsIgnoreCase(scheme)
+                    && !isLocalLoopback;
         }
         return handleNavigation(v, uri.toString());
     }

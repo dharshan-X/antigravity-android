@@ -47,7 +47,8 @@ public final class WebSettingsFactory {
         settings.setAllowContentAccess(true); // Needed for content:// file-picker results.
         settings.setAllowFileAccessFromFileURLs(false);
         settings.setAllowUniversalAccessFromFileURLs(false);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        // Swarm and local sidecar services run on loopback HTTP inside the HTTPS core document.
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(view, true);
         }
